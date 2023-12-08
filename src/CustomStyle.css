@@ -1,0 +1,223 @@
+/* CustomStyles.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+/* General Body Styles */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f8f9fa; /* Light grey background for a soft look */
+    color: #333; /* Dark text for readability */
+  }
+  
+  /* Big, Bold Fonts */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
+    color: #6c757d; /* Dark grey color for headings */
+  }
+  
+  /* Customizing Bootstrap Components */
+
+  .nav-tabs {
+    height: 5vh;
+  }
+  
+  /* Nav Tabs */
+  .nav-tabs .nav-link {
+    background-color: #1b406e; /* Pastel orange */
+    border-radius: 0.5rem; /* Rounded corners */
+    color: gray;
+    margin-right: 0.5rem;
+  }
+  
+  .nav-tabs .nav-link.active {
+    background-color: #5bc0de; /* Light blue */
+    color: white;
+  }
+  
+  /* Tab Content */
+  .tab-content {
+    background-color: rgb(95, 141, 224); /* Light green */
+    margin-top: 0.5vh;
+    height: 90vh;
+    padding: 0!important;
+  }
+  
+  /* Cards (For Game Tab) */
+  .card {
+    border-radius: 0.5rem; /* Rounded corners for cards */
+    background-color: #d9edf7; /* Light blue */
+  }
+  
+  .card-header {
+    background-color: #f7f7f9; /* Very light grey */
+    border-bottom: 1px solid #e1e1e8; /* Light grey border */
+  }
+  
+  .card-body {
+    color: #5a5a5a; /* Soft black color for card text */
+  }
+  
+  /* Buttons */
+  .btn {
+    border-radius: 0.5rem; /* Rounded buttons */
+    font-weight: bold;
+  }
+  
+/* CustomStyles.css */
+
+.game-interface {
+    position: absolute;
+    width: 100%;
+    height: 90vh;
+  }
+  
+  .game-interface > div {
+    position: absolute;
+    width: 100%;
+    height: 90vh;
+    flex: 1;
+    object-fit: cover;
+  }
+  
+  .background-layer {
+    /* Background full size */
+    width: 100%; /* Full width */
+    display: flex;
+    flex-direction: column;
+    height: 90vh;
+  }
+  
+  .background-layer img {
+    /* Background full size */
+    flex: 1;
+    object-fit: cover;
+    width: 100%; /* Full width */
+    height: 90vh;
+  }
+  
+  .character-layer {
+    height: 100%; /* Adjusted to 75% of background */
+    width: 100%; /* Width adjusts to maintain image ratio */
+  }
+  
+  .character-container {
+    display: flex;
+    justify-content: space-evenly; /* Equally space characters */
+    align-items: last baseline; 
+    width: 100%;
+    height: 100%; /* As per your requirement */
+  }
+  
+  .character-container img{
+    width: auto;
+    height: 85vh; /* As per your requirement */
+  }
+
+/* TextBox.css */
+.text-box {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black */
+  color: white;
+  padding: 5vh 7%; /* Adjust padding as needed */
+  font-size: 20px; /* Adjust font size as needed */
+  height: 30vh; /* Fixed height */
+  overflow-y: auto; /* Allows scrolling if text is too long */
+  text-align: left;
+}
+
+.text-box p {
+  margin-top: 0;
+  margin-bottom: 1em; /* Adjust the space between paragraphs */
+}
+
+  
+  /* ChoiceBox.css */
+  .choice-box {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly; /* Equally space characters */
+    top: 50%;
+    left: 50%;
+    padding-top: 10vh;
+    padding-bottom: 20vh;
+    transform: translate(-50%, -50%);
+    width: 80%; /* Adjust the width as needed */
+    max-width: 400px; /* Optional: Set a maximum width */
+    text-align: center;
+  }
+  
+  .choice-button {
+    display: block;
+    margin: 10px auto;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 20px; /* Rounded corners */
+    background-color: #fff;
+    color: #000;
+    font-size: 24px;
+    font-weight: bolder;
+    cursor: pointer;
+  }
+  
+  .choice-button:hover {
+    background-color: #eee; /* Lighter background on hover */
+  }
+
+  .gray-out {
+    filter: grayscale(100%); /* Gray out effect */
+  }
+
+/* SettingsTab.css */
+.group {
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  overflow: hidden; /* Ensures the content is clipped during animation */
+  width: 90%;
+}
+
+.group-title {
+  background-color: #f5f5f5;
+  padding: 10px;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.group-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out; /* Animation */
+}
+
+.group-content.open {
+  max-height: 500px; /* Adjust as needed */
+}
+
+.group-content.closed {
+  max-height: 0;
+}
+
+.setting-item {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.setting-item label {
+  flex-basis: 40%;
+  margin-right: 10px;
+  white-space: nowrap;
+}
+
+.setting-item input, .setting-item select, .setting-item .other-input-type {
+  flex-grow: 1;
+}
+
+  

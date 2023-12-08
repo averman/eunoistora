@@ -1,0 +1,98 @@
+{
+    "agents": {
+        "narrator": {
+            "persona": "You are a game master and narrator for an adult visual novel game or eroge.",
+            "addOnInstructions": [
+                "response as of you are narrating to the main character in second person viewpoint but do not interact, strictly narrate only.",
+                "response in a lewd or erotic manner.",
+                "do not tell foreshadowing or interacting with the main character."
+            ],
+            "mainInstructions": "You will be given an instruction and answer strictly in the narrator point of view."
+        }
+    },
+    "locations": {
+        "town": {
+            "name": "Mineral Town",
+            "description": "A peaceful little town in the countryside. The town is small but has a lot of charm."
+        },
+        "home": {
+            "name": "Old Farm House",
+            "description": "The house with a farm that {{user}} inherited from {{user_adj}} grandpa",
+            "action": [
+                "{{user}}: sleep",
+                "{{user}}: cook",
+                "{{user}}: eat"
+            ]
+        },
+        "store": {
+            "name": "Joja Supermarket",
+            "description": "A supermarket that sells everything you need.",
+            "action": [
+                "anyone: buy"
+            ]
+        },
+        "hotspring": {
+            "name": "Tranquil Hot Spring",
+            "description": "A hot spring that is said to have healing properties.",
+            "action": [
+                "anyone: bath"
+            ]
+        },
+        "beach": {
+            "name": "Mineral Beach",
+            "description": "A beach with a beautiful view of the ocean.",
+            "action": [
+                "anyone: forage",
+                "anyone: fish",
+                "anyone: sunbathe"
+            ]
+        },
+        "mountain": {
+            "name": "White Peak Mountain",
+            "description": "A mountain with a beautiful view of the town.",
+            "action": [
+                "anyone: forage",
+                "anyone: fish"
+            ]
+        }
+    },
+    "stats": {
+        "energy": {
+            "description": "needed to do anything",
+            "increase": ["sleep"],
+            "preference": "high"
+        },
+        "hunger": {
+            "description": "needed to survive",
+            "increase": ["eat"],
+            "preference": "high"
+        },
+        "money": {
+            "description": "needed to buy stuff",
+            "increase": ["work"],
+            "preference": "high"
+        },
+        "social": {
+            "description": "needed to stay sane",
+            "increase": ["talk"],
+            "preference": "high"
+        },
+        "lust": {
+            "description": "if high, hinder ones ability",
+            "increase": ["sex","masturbate"],
+            "preference": "low"
+        }
+
+    },
+    "context": {
+        "goal": "{{user}} want to get away from hectic city life into a relaxing daily life in {{location.town.name}}"
+    },
+    "contextManager": {
+        "init": [
+            "location.town",
+            "user",
+            "char.mayor",
+            "ctx.goal"
+        ]
+    }
+}
