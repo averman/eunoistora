@@ -3,8 +3,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
-import { GameProvider } from './GameContext';
-import { SettingProvider } from './SettingContext';
+import { GameProvider } from './contexts/GameContext';
+import { SettingProvider } from './contexts/SettingContext';
 
 ReactDOM.render(
   <React.StrictMode>

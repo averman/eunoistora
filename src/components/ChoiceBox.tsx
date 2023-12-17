@@ -1,6 +1,6 @@
 // ChoiceBox.tsx
 import React from 'react';
-import { useGame } from './GameContext';
+import { useGame } from '../contexts/GameContext';
 
 const ChoiceBox = ({ choices }: { choices: { text: string; handler: () => void }[];}) => {
   const { setImage, setTextboxText, setChoiceBox } = useGame();

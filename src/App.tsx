@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import TabContainer from './TabContainer';
+import TabContainer from './tabs/TabContainer';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './CustomStyle.css';
 

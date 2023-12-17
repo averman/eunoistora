@@ -1,6 +1,7 @@
 // SettingsTab.tsx
 import React, { useContext, useState } from 'react';
-import { SettingContext } from './SettingContext';
+import { SettingContext } from '../contexts/SettingContext';
+import { ConnectorGenerator } from '../components/GeneratorComponent';
 
 interface CollapsibleGroupProps {
     title: string;
@@ -58,14 +59,10 @@ const SettingsTab = () => {
                 {/* Add more settings inputs here */}
             </CollapsibleGroup>
 
-            <CollapsibleGroup title="Modules">
-                {/* Example: Slider */}
-                <input
-                    type="range"
-                    value={settings.modules.someModuleSetting}
-                    onChange={(e) => handleInputChange('modules', 'someModuleSetting', parseInt(e.target.value))}
-                />
-                {/* Add more settings inputs here */}
+            <CollapsibleGroup title="Connectors">    
+                {/* Here we add the new Generator component */}
+                <ConnectorGenerator />
+                {/* Other settings for connectors */}
             </CollapsibleGroup>
 
             <CollapsibleGroup title="Characters">

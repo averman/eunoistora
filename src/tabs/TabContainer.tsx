@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
 import GameTab from './GameTab';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useGame } from './GameContext';
-import GameController from './engine/GameController';
+import { useGame } from '../contexts/GameContext';
+import GameController from '../engine/GameController';
 import SettingsTab from './SettingTab';
-import { SettingContext } from './SettingContext';
+import { SettingContext } from '../contexts/SettingContext';
+import ChatTab from './ChatTab';
 
 const TabContainer: React.FC = () => {
 
@@ -44,7 +45,7 @@ const TabContainer: React.FC = () => {
           <a className={`nav-link ${activeTab === 'settingsTab' ? 'active' : ''}`} onClick={() => handleTabChange('settingsTab')}>Settings</a>
         </li>
         <li className="nav-item">
-          <a className={`nav-link ${activeTab === 'loggingTab' ? 'active' : ''}`} onClick={() => handleTabChange('loggingTab')}>Logging</a>
+          <a className={`nav-link ${activeTab === 'chatTab' ? 'active' : ''}`} onClick={() => handleTabChange('chatTab')}>Chat</a>
         </li>
         <li className="nav-item">
           <a className={`nav-link`} onClick={goToMainMenu}>Go to Main Menu</a>
@@ -53,7 +54,7 @@ const TabContainer: React.FC = () => {
       <div className="tab-content p-3">
         {activeTab === 'gameTab' && <GameTab />}
         {activeTab === 'settingsTab' && <SettingsTab />}
-        {activeTab === 'loggingTab' && <div>Logging Content</div>}
+        {activeTab === 'chatTab' && <ChatTab />}
       </div>
     </div>
   );

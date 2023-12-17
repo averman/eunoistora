@@ -1,4 +1,4 @@
-import { SettingContextValue } from "../SettingContext";
+import { SettingContextValue } from "../contexts/SettingContext";
 import { AiCompletion } from "../accessor/AiCompletion";
 import { Chub } from "../accessor/Chub";
 import { OpenAiAccessor } from "../accessor/OpenAI";
@@ -58,11 +58,11 @@ class GameController {
     // Game loop logic
     // For example, setting initial scene
     console.log(this.settings)
-    this.aiCompletion = new OpenAiAccessor(this.settings.apis.openAiApiKey, 'gpt-3.5-turbo-1106');
-    // this.aiCompletion = new Chub(this.settings.apis.chubApiKey);
+    // this.aiCompletion = new OpenAiAccessor(this.settings.apis.openAiApiKey, 'gpt-3.5-turbo-1106');
+    this.aiCompletion = new Chub(this.settings.apis.chubApiKey);
     let storyTeller = new StoryTeller();
     await storyTeller.importFromUri("storytellers/test.json");
-    let contextManager = new ContextManager(this.settings, storyTeller);
+    // let contextManager = new ContextManager(this.settings, storyTeller);
     // this.aiCompletion = new OpenRouter(this.settings.apis.openRouterApiKey, 'airoboros');
     let narrator = new NarratorAgent(this.aiCompletion);
     narrator.tune(storyTeller);

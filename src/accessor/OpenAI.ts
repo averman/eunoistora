@@ -53,5 +53,34 @@ export class OpenAiAccessor implements AiCompletion {
             throw error;
         }
     }
+
+    public static async getEngines(apikey: string): Promise<string[]> {
+        let engines: string[] = [];
+
+        const url = `https://api.openai.com/v1/engines`;
+        const headers = {
+            'Authorization': `Bearer ${apikey}`,
+            'Content-Type': 'application/json'
+        };
+
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: headers
+            });
+    
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status}`);
+            }
+    
+            const data = await response.json();
+            engines = data.data.map((e: any) => e.id);
+        } catch (error) {
+            console.error('Error calling OpenAI API:', error);
+            throw error;
+        }
+
+        return engines;
+    }
     
 }

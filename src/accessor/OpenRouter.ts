@@ -121,4 +121,15 @@ export class OpenRouter implements AiCompletion {
             throw error;
         }
     }
+
+    public static async getEngines(apikey: string): Promise<string[]> {
+        let models = await fetch("https://openrouter.ai/api/v1/models", {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${apikey}`,
+            },
+        });
+
+        return (await models.json()).data.map((m: any) => m.id);
+    }
 }

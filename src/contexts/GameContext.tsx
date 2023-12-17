@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext } from 'react';
-import GameController from './engine/GameController';
+import GameController from '../engine/GameController';
 
 // Define your image map here
 const imageMap: { [key: string]: string } = {

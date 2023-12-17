@@ -70,4 +70,40 @@ export class Chub implements AiCompletion {
             throw error;
         }
     }
+
+    public static async getEngines(apikey: string): Promise<string[]> {
+        let engines: string[] = [];
+
+        let uris: string[] = [
+            'https://mars.chub.ai/chub/asha/v1',
+            'https://mercury.chub.ai/mythomax/v1',
+        ];
+
+        const headers = {
+            'Authorization': `Bearer ${apikey}`,
+            'Content-Type': 'application/json'
+        };
+
+        for(let uri of uris) {
+            const url = `${uri}/models`;
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: headers,
+                });
+        
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status}`);
+                }
+        
+                const data = await response.json();
+                data.data.forEach((element:any) => {
+                    engines.push(element.id);
+                });
+            } catch (error) {
+                console.error('Error calling Chub API:', error);
+            }
+        }
+        return engines;
+    }
 }
