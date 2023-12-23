@@ -36,10 +36,23 @@
     flex-grow: 1;
     margin-right: 10px;
   }
+
+  .inputSection .inputControls {
+    width: 30%;
+  }
   
   .controls {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
   }
+
+  .modelDisplay {
+    font-size: xx-small;
+  }
   
+  .messageSender {
+    font-weight: bold;
+    margin-bottom: 5px;
+    /* Add more styling as needed */
+}

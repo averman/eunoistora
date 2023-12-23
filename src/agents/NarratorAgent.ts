@@ -28,9 +28,32 @@ export class NarratorAgent extends AiAgents {
         return `${this.settings.persona}\n${this.settings.addOnInstructions.join('\n')}\n${this.settings.mainInstructions}`;
     }
     getContext() {
-        return ["The main character is someone new in town"];
+        return [{
+            role: "system",
+            content: "The main character is someone new in town"
+        }];
     }
     mapPrompt(prompt: string): string {
-        return `${prompt}`;
+        return this.answerFormatPrompt(prompt, 50);
+    }
+
+    answerFormat() {
+        return `---${this.getName()}---\n<your answer>\n---end ${this.getName()}---`;
+    }
+
+    parseResponse(response: string): string {
+        let lower = response.toLowerCase();
+        let a = lower.indexOf(`---${this.getName()}---\n`);
+        let b = lower.indexOf(`---end ${this.getName()}---`);
+        console.log("[parseResponse]", lower, a, b)
+        if(a == -1 ) a = 0;
+        else a += this.getName().length + 7;
+        if(b == -1 ) b = response.length;
+        return response.substring(a, b);
+    }
+
+    answerFormatPrompt(prompt: string, answerLength: number): string {
+        return `${prompt}\n\n your answer should be around ${answerLength} words long with strictly this format:\n${this.answerFormat()}`;
+    
     }
 }

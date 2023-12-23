@@ -22,12 +22,12 @@ export class Chub implements AiCompletion {
     getName(): string {
         return "Chub " + this.engine[this.uriIndex];
     }
-    async complete(system: string, context: string[], question: string): Promise<string> {
+    async complete(system: string, context:  {role: string, content: string}[], question: string): Promise<string> {
         let promptObject = {
             model: this.engine[this.uriIndex],
             messages: [
                 { "role": "system", "content": system },
-                ...context.map((c) => { return { "role": "user", "content": c } }),
+                ...context,
                 { "role": "user", "content": question }
             ]
         }
