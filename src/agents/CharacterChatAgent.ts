@@ -76,6 +76,7 @@ class CharacterChatAgent extends AiAgentsWithContextManager {
         }
 
         // scene guide lines
+        let haveGuidelines = false;
         if(currentScene?.sceneGuideLines && Object.keys(currentScene.sceneGuideLines).length > 0){
             let guideLines = Object.entries(currentScene.sceneGuideLines).filter(([key, value]) => {
                 return key == this.baseCharacter.name.fullname || key == "all";
@@ -83,6 +84,7 @@ class CharacterChatAgent extends AiAgentsWithContextManager {
             result.push(...(guideLines.map(([key, value]) => {
                 return {role: "system", content: `scene guide lines: ${resolveValue(value)}`}
             })));
+            haveGuidelines = true;
         }
 
         result.push(...(contexts.map((context) => {
@@ -96,9 +98,10 @@ class CharacterChatAgent extends AiAgentsWithContextManager {
         }
 
         // final prompt instruction
+        let finalInstructionContent = `Respond strictly as ${this.getName()} in ${this.getName()} point of view with action or conversation${haveGuidelines?" that is inline with the scene guide lines":""}. IMPORTANT: DO NOT EVER RESPOND AS OTHER CHARACTER OR DESCRIBE OTHER CHARACTER'S ACTION AND DO NOT ANSWER FROM THIRD PERSON POV.`
         let promptInstruction: Context = {
             role: "system",
-            content: `Respond strictly as ${this.getName()} in ${this.getName()} point of view with action or conversation that is inline with the scene guide lines. IMPORTANT: DO NOT EVER RESPOND AS OTHER CHARACTER OR DESCRIBE OTHER CHARACTER'S ACTION AND DO NOT ANSWER FROM THIRD PERSON POV.`
+            content: finalInstructionContent
         };
         result.push(promptInstruction);
 
