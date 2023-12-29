@@ -80,7 +80,10 @@ class CharacterChatAgent extends AiAgentsWithContextManager {
                     }
                 }
             }
-            let charInThisScene = contexts.map((context) => context.sender.startsWith("user")?context.sender:context.sender.split(":")[1]);
+            let charInThisScene = contexts.map((context) => context.sender.startsWith("user")?context.sender:context.sender.split(":")[1]).reduce((prev, curr) => {
+                if(!prev.includes(curr)) prev.push(curr);
+                return prev;
+            }, [] as string[]);
             for(let char of charInThisScene){
                 result.push({role: "system", content: `the last the perception of ${this.getName()} about ${char} are:\n\n${
                     characterPerceptions[this.getName()][char]

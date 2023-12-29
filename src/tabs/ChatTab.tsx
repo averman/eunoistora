@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { ChevronDown, ChevronRight, PencilSquare, Reply, Trash } from 'react-bootstrap-icons';
+import { ChevronDown, ChevronRight, PencilSquare, Reply, Trash, CardHeading } from 'react-bootstrap-icons';
 import ReactMarkdown from 'react-markdown';
 import styles from '../styles/ChatTab.module.css';
 import { SettingContext } from '../contexts/SettingContext';
@@ -15,6 +15,7 @@ import ChatSummarizingAgent from '../agents/ChatSummarizingAgent';
 import { SceneSummary } from '../models/SceneSummary';
 import Card from 'react-bootstrap/esm/Card';
 import EditSceneModal from '../components/EditSceneModal';
+import AnswerReformattingAgent from '../agents/AnswerReformattingAgent';
 
 const ChatTab: React.FC = () => {
     const [input, setInput] = useState<string>('');
@@ -59,7 +60,8 @@ const ChatTab: React.FC = () => {
         });
         let ais = getAiCompletions(settings);
         let newUtilAgents = {
-            summarizer: new ChatSummarizingAgent(ais['mars'], chatContextManager)
+            summarizer: new ChatSummarizingAgent(ais['mars'], chatContextManager),
+            reformatter: new AnswerReformattingAgent(ais['gpt3.5'])
         }
         setUtilAgents(newUtilAgents);
     }, []);
@@ -192,7 +194,20 @@ const ChatTab: React.FC = () => {
             setChatHistory(chatHistory.filter(msg => msg.id !== messageId));
         });
     };
+    
+    function editAiMessage(messageId: number, response: string, messageToEdit: ChatMessage){
+        const aiMessage: ChatMessage = {
+            id: messageId,
+            text: response,
+            scenes: messageToEdit.scenes,
+            sender: 'assistant:' + messageToEdit.model,
+            model: messageToEdit.model,
+        };
+        db.messages.put(aiMessage).then(() => {
+            setChatHistory(prevHistory => prevHistory.map(msg => msg.id === messageId ? aiMessage : msg));
+        });
 
+    }
     const regenerateAIResponse = (messageId: number) => {
         const messageToRegenerate = chatHistory.find(msg => msg.id === messageId);
         // querying message is the message before messageToRegenerate
@@ -202,19 +217,18 @@ const ChatTab: React.FC = () => {
                 regenerate: messageToRegenerate, 
                 onScene: messageToRegenerate.scenes.join(',')}
             ).then((response: string) => {
-                const aiMessage: ChatMessage = {
-                    id: messageId,
-                    text: response,
-                    scenes: messageToRegenerate.scenes,
-                    sender: 'assistant:' + messageToRegenerate.model,
-                    model: messageToRegenerate.model,
-                };
-                db.messages.put(aiMessage).then(() => {
-                    setChatHistory(prevHistory => prevHistory.map(msg => msg.id === messageId ? aiMessage : msg));
-                });
+                editAiMessage(messageId, response, messageToRegenerate);
             });
         }
     };
+
+    function reformatMessage(messageId: number): void {
+        const messageToReformat = chatHistory.find(msg => msg.id === messageId);
+        if(!messageToReformat) return;
+        utilAgents.reformatter.query(messageToReformat!.text).then((response: string) => {
+            editAiMessage(messageId, response, messageToReformat);
+        });
+    }
 
     const renderGroupedMessages = (messages: ChatMessage[], currentScene: string[] = [], level: number = 0) => {
         if (level > 4) return null;
@@ -292,7 +306,9 @@ const ChatTab: React.FC = () => {
                                             {msg.sender.startsWith('assistant') && (
                                                 <Reply onClick={() => regenerateAIResponse(msg.id)} className="mx-1"/>
                                             )}
-
+                                            {msg.sender.startsWith('assistant') && (
+                                                <CardHeading onClick={() => reformatMessage(msg.id)} className="mx-1" />
+                                            )}
                                         </div>
                                         {/* Optionally display the model */}
                                         <div className={styles.modelDisplay}>
@@ -393,3 +409,4 @@ const ChatTab: React.FC = () => {
 };
 
 export default ChatTab;
+
