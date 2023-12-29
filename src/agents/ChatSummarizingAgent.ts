@@ -11,8 +11,13 @@ class ChatSummarizingAgent extends AiAgentsWithContextManager {
         return "INSTRUCTION: Summarize all the chat, conversactions, and events that happened so far in this scene."
     }
     parseResponse(response: string): string {
-        return response;
+        return resolveValue(response);
     }
+}
+
+function resolveValue(str: string){
+    // todo: substitute {{user}} with user name
+    return str.split("{{user}}").join("you");
 }
 
 export default ChatSummarizingAgent;
