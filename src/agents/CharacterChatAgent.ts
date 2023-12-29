@@ -45,34 +45,47 @@ class CharacterChatAgent extends AiAgentsWithContextManager {
         const resolveValue = this.resolveValue.bind(this);
 
         // character context
-        let charContexts: Context[] = Object.values(this.baseCharacter.properties).map((property) => {
-            let result: Context = {
-                role: "system",
-                content: `${property.name}: ${resolveValue(property.description)}`
-            };
-            return result;
+        let charContexts: string[] = Object.values(this.baseCharacter.properties).map((property) => {
+            return `${property.name}: ${resolveValue(property.description)}`;
         });
-        result.push(...charContexts);
+        result.push({
+            role: "system",
+            content: `${this.getName()} descriptions:\n\n${charContexts.join("\n")}`
+        
+        });
 
         // character behavior
-        let charBehavior: Context[] = Object.values(this.baseCharacter.behaviors).map((behavior) => {
+        let charBehavior: string[] = Object.values(this.baseCharacter.behaviors).map((behavior) => {
             let prefix = "";
             if(behavior.condition && behavior.condition.length > 0) {
                 prefix = `if ${behavior.condition}, `;
             }
-            let result: Context = {
-                role: "system",
-                content: `${prefix}${this.baseCharacter.name.fullname} ${behavior.severity} ${resolveValue(behavior.value)}`
-            };
-            return result;
+            return `${prefix}${this.baseCharacter.name.fullname} ${behavior.severity} ${resolveValue(behavior.value)}`;
         });
-        result.push(...charBehavior);
+        result.push({role: "system", content: `${this.getName()} behavior:\n\n${charBehavior.join("\n")}`});
 
         // scene summary
         if(summaries && summaries.length > 0){
+            let characterPerceptions: {[key: string]: {[key: string]: string}} = {};
             result.push(...(summaries.map((summary) => {
                 return {role: "system", content: `previous scene summary (scene ${summary.scenePath}): ${summary.summary}`}
             })));
+            for(let summary of summaries){
+                if(summary.characterPerception){
+                    for(let [key, value] of Object.entries(summary.characterPerception)){
+                        if(!characterPerceptions[key]) characterPerceptions[key] = {};
+                        for(let [key2, value2] of Object.entries(value)){
+                            characterPerceptions[key][key2] = value2;
+                        }
+                    }
+                }
+            }
+            let charInThisScene = contexts.map((context) => context.sender.startsWith("user")?context.sender:context.sender.split(":")[1]);
+            for(let char of charInThisScene){
+                result.push({role: "system", content: `the last the perception of ${this.getName()} about ${char} are:\n\n${
+                    characterPerceptions[this.getName()][char]
+                }`});
+            }
         }
 
         // scene guide lines

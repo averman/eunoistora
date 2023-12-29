@@ -9,5 +9,6 @@ export interface SceneSummary {
     sceneBehaviorChanges?: {[key: string]: CharacterBehavior[]};
     scenePropertyChanges?: {[key: string]: CharacterProperty[]};
     sceneScenarioChanges?: {[key: string]: CharacterScenario[]};
+    characterPerception?: {[key: string]: {[key: string]: string}};
     sceneContexts?: string[];
 }
