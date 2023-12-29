@@ -6,6 +6,7 @@ import GameController from '../engine/GameController';
 import SettingsTab from './SettingTab';
 import { SettingContext } from '../contexts/SettingContext';
 import ChatTab from './ChatTab';
+import CharacterTab from './CharacterTab';
 
 const TabContainer: React.FC = () => {
 
@@ -45,6 +46,9 @@ const TabContainer: React.FC = () => {
           <a className={`nav-link ${activeTab === 'settingsTab' ? 'active' : ''}`} onClick={() => handleTabChange('settingsTab')}>Settings</a>
         </li>
         <li className="nav-item">
+          <a className={`nav-link ${activeTab === 'characterTab' ? 'active' : ''}`} onClick={() => handleTabChange('characterTab')}>Characters</a>
+        </li>
+        <li className="nav-item">
           <a className={`nav-link ${activeTab === 'chatTab' ? 'active' : ''}`} onClick={() => handleTabChange('chatTab')}>Chat</a>
         </li>
         <li className="nav-item">
@@ -54,6 +58,7 @@ const TabContainer: React.FC = () => {
       <div className="tab-content p-3">
         {activeTab === 'gameTab' && <GameTab />}
         {activeTab === 'settingsTab' && <SettingsTab />}
+        {activeTab === 'characterTab' && <CharacterTab />}
         {activeTab === 'chatTab' && <ChatTab />}
       </div>
     </div>

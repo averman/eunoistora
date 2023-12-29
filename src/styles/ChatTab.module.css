@@ -55,4 +55,23 @@
     font-weight: bold;
     margin-bottom: 5px;
     /* Add more styling as needed */
+  }
+
+.chatem {
+  color: #aaa;
+  font-style: italic;
+}
+
+.sceneCardHeader {
+  background-color: #69c;
+}
+
+.sceneCard {
+  background-color: #8ae;
+}
+
+.sceneCardTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }

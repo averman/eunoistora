@@ -15,6 +15,46 @@ const cachedAiAgents: {
   }
 } = {};
 
+const cachedAiCompletions: {
+  [key: string]: {
+    completion: AiCompletion,
+    model: string,
+    platform: string,
+    connectorType: string
+  }
+} = {};
+
+function getAiCompletions(settings: { [key: string]: any }): { [key: string]: AiCompletion} {
+  let connectors: any = settings.connectors.connectors;
+  let result: { [key: string]: AiCompletion} = {};
+  for(let connector of connectors) {
+    let name = connector.name;
+    if(cachedAiCompletions[name]) {
+      result[name] = cachedAiCompletions[name].completion;
+      continue;
+    } else {
+      let accessor: AiCompletion | undefined = undefined;
+      if(connector.platform == 'openai'){
+        accessor = new OpenAiAccessor(settings.apis.openAiApiKey, connector.model);
+      } else if (connector.platform == 'chub') {
+        accessor = new Chub(settings.apis.chubApiKey);
+      } else if (connector.platform == 'openrouter') {
+        accessor = new OpenRouter(settings.apis.openRouterApiKey, connector.model);
+      }
+      if(typeof accessor !== 'undefined') {
+        cachedAiCompletions[name] = {
+          completion: accessor,
+          model: connector.model,
+          platform: connector.platform,
+          connectorType: connector.connectorType
+        }
+        result[name] = accessor;
+      }
+    }
+  }
+  return result;
+}
+
 function getAiAgents(settings: { [key: string]: any }, contextManager: ContextManager): { [key: string]: AiAgents} {
   let connectors: any = settings.connectors.connectors;
   let result: { [key: string]: AiAgents} = {};
@@ -53,3 +93,4 @@ function getAiAgents(settings: { [key: string]: any }, contextManager: ContextMa
 }
 
 export default getAiAgents;
+export { getAiCompletions };

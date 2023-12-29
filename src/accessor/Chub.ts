@@ -7,6 +7,8 @@ export class Chub implements AiCompletion {
         this.uriIndex = 0;
     }
 
+    private lastQuery: Promise<any> = Promise.resolve();
+
     apikey: string;
     uriIndex: number;
     uri: string[] = [
@@ -19,6 +21,8 @@ export class Chub implements AiCompletion {
         'mythomax',
     ];
 
+    queue: string[] = [];
+
     getName(): string {
         return "Chub " + this.engine[this.uriIndex];
     }
@@ -28,11 +32,13 @@ export class Chub implements AiCompletion {
             messages: [
                 { "role": "system", "content": system },
                 ...context,
-                { "role": "user", "content": question }
             ]
         }
+        if(question && question.length > 0) {
+            promptObject.messages.push({ "role": "user", "content": question });
+        }
         try {
-            return await this.queryChub(JSON.stringify(promptObject))
+            return await this.queryChub(JSON.stringify(promptObject, null, 2))
         } catch (error) {
             if((error as any).message == "Error: 403" && this.uriIndex + 1 < this.uri.length) {
                 this.uriIndex++;
@@ -43,32 +49,41 @@ export class Chub implements AiCompletion {
     }
 
     private async queryChub(prompt: string): Promise<string> {
-        const url = this.uri[this.uriIndex] + "/chat/completions";
 
+        await this.lastQuery;
+        
+        const url = this.uri[this.uriIndex] + "/chat/completions";
         const headers = {
             'Authorization': `Bearer ${this.apikey}`,
             'Content-Type': 'application/json'
         };
 
-        console.log("Chub query", prompt, headers);
-    
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: headers,
-                body: prompt  // Use the stringified JSON directly
-            });
-    
-            if (!response.ok) {
-                throw new Error(`Error: ${response.status}`);
+        // Create a new promise that represents this query's work
+        const currentQuery = new Promise<string>(async (resolve, reject) => {
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: headers,
+                    body: prompt
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                resolve(data.choices[0].message.content);
+            } catch (error) {
+                console.error('Error calling Chub API:', error);
+                reject(error);
             }
-    
-            const data = await response.json();
-            return data.choices[0].message.content;  // Adjust according to the response structure
-        } catch (error) {
-            console.error('Error calling Chub API:', error);
-            throw error;
-        }
+        });
+
+        // Update the lastQuery to be the current one
+        this.lastQuery = currentQuery;
+
+        // Wait for this query to complete before finishing
+        return currentQuery;
     }
 
     public static async getEngines(apikey: string): Promise<string[]> {

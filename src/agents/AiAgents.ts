@@ -12,11 +12,10 @@ export abstract class AiAgents {
     abstract getInstructions(): string;
     abstract getContext(parameters?: any):  Context[];
     abstract mapPrompt(prompt: string): string;
-    abstract tune(storyTeller: StoryTeller): void;
     abstract parseResponse(response: string): string;
 
     async query(prompt: string, parameters?: any): Promise<string> {
-        let response = this.ai.complete(this.getInstructions(), this.getContext(), this.mapPrompt(prompt));
+        let response = this.ai.complete(this.getInstructions(), this.getContext(parameters), this.mapPrompt(prompt));
         return this.parseResponse(await response);
     }
 }

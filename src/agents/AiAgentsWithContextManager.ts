@@ -11,8 +11,12 @@ abstract class AiAgentsWithContextManager extends AiAgents {
         this.contextManager = contextManager;
     }
 
+    parameterMapping(parameters: any): any {
+        return parameters || {};
+    }
+
     getContext(parameters?: any):  Context[] {
-        return this.contextManager.getContext(parameters || {});
+        return this.contextManager.getContext(this.parameterMapping(parameters));
     }
 }
 
