@@ -13,12 +13,13 @@ class ChatContextManager implements ContextManager {
             summaries = Object.values(this.sceneSummary).filter((summary) => {
                 return summary.characters && summary.characters.includes(parameters.character.name.fullname);
             });
+        } else {
+            summaries = Object.values(this.sceneSummary)
         }
         // console.log("getContext", this.chatHistory)
         let filteredChat = Array.from(this.chatHistory);
         if(parameters.regenerate) {
             const regeneratedIndex = this.chatHistory.indexOf(parameters.regenerate);
-            console.log("regeneratedIndex", regeneratedIndex)
             filteredChat = filteredChat.slice(0, regeneratedIndex);
         }
         if(parameters.onScene) {
@@ -44,7 +45,6 @@ class ChatContextManager implements ContextManager {
                                     , [] as string[])
         summaries = distinctScenesOrdered.map((scenePath) => summaries.find((summary) => summary.scenePath == scenePath)!)
                         .filter((summary) => summary);
-
         let context: Context[] = [];
         if(parameters.contextMapping) {
             context = parameters.contextMapping(filteredChat, summaries, thisSceneSummary);
@@ -58,7 +58,6 @@ class ChatContextManager implements ContextManager {
                 })
             ]
         }
-        console.log("context", context)
         return context;
     }
 }

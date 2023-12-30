@@ -96,8 +96,11 @@ class characterPerceptionAgent extends AiAgents {
 
         return result;
     }
-    mapPrompt(prompt: string): string {
-        return "";
+    mapPrompt(prompt: string): Context {
+        return {
+            role: "system",
+            content: ""
+        };
     }
     parseResponse(response: string): string {
         return response;

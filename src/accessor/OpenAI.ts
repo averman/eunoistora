@@ -13,13 +13,13 @@ export class OpenAiAccessor implements AiCompletion {
     getName(): string {
         return "OpenAI " + this.engine;
     }
-    complete(system: string, context:  {role: string, content: string}[], question: string): Promise<string> {
+    complete(system: string, context:  {role: string, content: string}[], question: {role: string, content: string}): Promise<string> {
         let promptObject = {
             model: this.engine,
             messages: [
                 { "role": "system", "content": system },
                 ...context,
-                { "role": "user", "content": question }
+                question
             ]
         }
         return this.queryOpenAi(JSON.stringify(promptObject));

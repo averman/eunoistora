@@ -220,4 +220,8 @@ body {
   flex-grow: 1;
 }
 
+.modelandtype {
+  display: inline-block;
+  width: 50%;
+}
   

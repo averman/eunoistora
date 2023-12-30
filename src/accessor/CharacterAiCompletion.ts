@@ -25,7 +25,7 @@ class CharacterAiCompletion implements AiCompletion{
     getName(): string {
         return `Character ${this.character.name.fullname} AI`;
     }
-    complete(system: string, context: { role: string; content: string; }[], question: string): Promise<string> {
+    complete(system: string, context: { role: string; content: string; }[], question: {role: string, content: string}): Promise<string> {
         return this.completions.base.complete(system, context, question);
     }
     

@@ -1,5 +1,6 @@
 import { AiCompletion } from "../accessor/AiCompletion";
 import { StoryTeller } from "../engine/StoryTeller";
+import { Context } from "../types/Context";
 import { AiAgents } from "./AiAgents";
 
 export class NarratorAgent extends AiAgents {
@@ -33,8 +34,11 @@ export class NarratorAgent extends AiAgents {
             content: "The main character is someone new in town"
         }];
     }
-    mapPrompt(prompt: string): string {
-        return this.answerFormatPrompt(prompt, 50);
+    mapPrompt(prompt: string): Context {
+        return {
+            role: "user",
+            content: this.answerFormatPrompt(prompt, 50)
+        };
     }
 
     answerFormat() {

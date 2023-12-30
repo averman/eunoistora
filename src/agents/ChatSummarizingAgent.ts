@@ -1,3 +1,4 @@
+import { Context } from "../types/Context";
 import AiAgentsWithContextManager from "./AiAgentsWithContextManager";
 
 class ChatSummarizingAgent extends AiAgentsWithContextManager {
@@ -7,8 +8,11 @@ class ChatSummarizingAgent extends AiAgentsWithContextManager {
     getInstructions(): string {
         return "You will be given all the chat, conversactions, and events that happened so far in this scene. Summarize them all.";
     }
-    mapPrompt(prompt: string): string {
-        return "INSTRUCTION: Summarize all the chat, conversactions, and events that happened so far in this scene."
+    mapPrompt(prompt: string): Context {
+        return {
+            role: "system",
+            content: "INSTRUCTION: Summarize all the chat, conversactions, and events that happened so far in this scene."
+        };
     }
     parseResponse(response: string): string {
         return resolveValue(response);

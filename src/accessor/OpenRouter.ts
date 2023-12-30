@@ -14,14 +14,14 @@ export class OpenRouter implements AiCompletion {
     getName(): string {
         return "OpenRouter " + this.engine;
     }
-    async complete(system: string, context:  {role: string, content: string}[], question: string): Promise<string> {
+    async complete(system: string, context:  {role: string, content: string}[], question: {role: string, content: string}): Promise<string> {
         if(!this.model) this.model = await this.assignModel();
         let promptObject = {
             model: this.model,
             messages: [
                 { "role": "system", "content": system },
                 ...context,
-                { "role": "user", "content": question }
+                question
             ]
         }
         return this.queryOpenAi(JSON.stringify(promptObject));
