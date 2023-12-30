@@ -14,10 +14,8 @@ class CharacterAiCompletion implements AiCompletion{
             let curAi = character.ai[key];
             if(key === "base") {
                 this.completions[key] = new CompositeAi(curAi.type, this.ais, curAi.connectors, curAi.parameters)
-            } else if(curAi.parameters.capabilities && Array.isArray(curAi.parameters.capabilities)) {
-                for(let capability of curAi.parameters.capabilities) {
-                    this.completions[capability] = new CompositeAi(curAi.type, this.ais, curAi.connectors, curAi.parameters)
-                }
+            } else if(curAi?.connectors?.length > 0 && curAi.parameters?.name) {
+                this.completions[curAi.parameters.name] = new CompositeAi(curAi.type, this.ais, curAi.connectors, curAi.parameters)
             }
         }
     }
@@ -26,6 +24,9 @@ class CharacterAiCompletion implements AiCompletion{
         return `Character ${this.character.name.fullname} AI`;
     }
     complete(system: string, context: { role: string; content: string; }[], question: {role: string, content: string}): Promise<string> {
+        if(question?.role === "aiSelection" && this.completions[question.content]) {
+            return this.completions[question.content].complete(system, context, question);
+        }
         return this.completions.base.complete(system, context, question);
     }
     
