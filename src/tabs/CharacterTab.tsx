@@ -182,7 +182,9 @@ const CharacterTab: React.FC = () => {
             }; break;
             case "AI": onChangeFunction = (key:string, item: any, keyItem: keyof CharacterAI)=>(e: any) => {
                 const updatedAi = { ...characterForm().ai };
-                (updatedAi[key][keyItem] as any) = JSON.parse(e.target.value);
+                if(keyItem === "type") (updatedAi[key][keyItem] as any) = e.target.value;
+                else if(keyItem === "connectors") (updatedAi[key][keyItem] as any) = e.target.value.split(",");
+                else if(keyItem === "parameters") (updatedAi[key][keyItem] as any) = JSON.parse(e.target.value);
                 updateNewCharacter({ ai: updatedAi });
             }; break;
         }
