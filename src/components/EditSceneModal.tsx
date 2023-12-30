@@ -23,7 +23,7 @@ let ais: {[key: string]: AiCompletion} = {};
 let rawSetting = localStorage.getItem('settings');
 if(rawSetting) {
     let settings = JSON.parse(rawSetting).settings;
-    if(settings.apis) {
+    if(settings?.apis) {
         ais = getAiCompletions(settings);
     }
 }

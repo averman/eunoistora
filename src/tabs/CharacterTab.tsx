@@ -85,6 +85,14 @@ const CharacterTab: React.FC = () => {
     const handleDeslectCharacter = () => {
         setActiveCharacter(null);
     };
+    
+    const handleDeleteCharacter = async () => {
+        if (activeCharacter) {
+            await db.characters.delete(activeCharacter.name.fullname);
+            setActiveCharacter(null);
+            fetchCharacters();
+        }
+    };
 
     const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files ? event.target.files[0] : null;
@@ -357,6 +365,7 @@ const CharacterTab: React.FC = () => {
                 {/* Submit Button for the entire form */}
                 <Button onClick={handleCreateCharacter}>{activeCharacter ? "Save Changes" : "Create Character"}</Button>
                 {activeCharacter && <Button onClick={handleDeslectCharacter}>Cancel</Button>}
+                {activeCharacter && <Button variant='danger' onClick={handleDeleteCharacter}>Delete</Button>}
             </div>
 
         </div>
