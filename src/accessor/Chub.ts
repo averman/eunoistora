@@ -26,7 +26,7 @@ export class Chub implements AiCompletion {
     getName(): string {
         return "Chub " + this.engine[this.uriIndex];
     }
-    async complete(system: string, context:  {role: string, content: string}[], question: string): Promise<string> {
+    async complete(system: string, context:  {role: string, content: string}[], question: {role: string, content: string}): Promise<string> {
         let promptObject = {
             model: this.engine[this.uriIndex],
             messages: [
@@ -34,8 +34,8 @@ export class Chub implements AiCompletion {
                 ...context,
             ]
         }
-        if(question && question.length > 0) {
-            promptObject.messages.push({ "role": "user", "content": question });
+        if(question?.content?.length > 0) {
+            promptObject.messages.push(question);
         }
         try {
             return await this.queryChub(JSON.stringify(promptObject, null, 2))

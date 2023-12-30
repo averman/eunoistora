@@ -16,6 +16,7 @@ import { SceneSummary } from '../models/SceneSummary';
 import Card from 'react-bootstrap/esm/Card';
 import EditSceneModal from '../components/EditSceneModal';
 import AnswerReformattingAgent from '../agents/AnswerReformattingAgent';
+import ChatNarratorAgent from '../agents/ChatNarratorAgent';
 
 const ChatTab: React.FC = () => {
     const [input, setInput] = useState<string>('');
@@ -24,6 +25,10 @@ const ChatTab: React.FC = () => {
         return localStorage.getItem('sceneInput') || '';
     });
     const [model, setModel] = useState<string>(() => {
+        // Initialize model from localStorage, or provide a default value
+        return localStorage.getItem('selectedModel') || 'defaultModel';
+    });
+    const [modelType, setModelType] = useState<string>(() => {
         // Initialize model from localStorage, or provide a default value
         return localStorage.getItem('selectedModel') || 'defaultModel';
     });
@@ -94,7 +99,11 @@ const ChatTab: React.FC = () => {
     }, [sceneSummaries]);
 
     useEffect(() => {
-        setAiAgents(getCharacters(settings, chatContextManager, characters));
+        let ais = getAiCompletions(settings);
+        setAiAgents({
+            ...getCharacters(settings, chatContextManager, characters),
+            narrator: new ChatNarratorAgent(ais.mars,chatContextManager)
+        });
     }, [characters]);
 
     useEffect(() => {
@@ -125,23 +134,31 @@ const ChatTab: React.FC = () => {
             return;
         }
         let onScene = sceneInput.split(',').map(s => s.trim()).filter(s => s).join(',');
-        aiAgents[model].query("",{onScene}).then((response: string) => {
+        aiAgents[model].query(modelType,{onScene}).then((response: string) => {
             const scenes = sceneInput.split(',').map(s => s.trim()).filter(s => s);
-            const aiMessage: ChatMessage = { id: Date.now(), text: response, scenes, sender: 'assistant:' + model, model };
+            const aiMessage: ChatMessage = { id: Date.now(), text: response, scenes, sender: 'assistant:' + model, model, modelType };
             db.messages.put(aiMessage).then(() => {
                 setChatHistory(prevHistory => [...prevHistory, aiMessage]);
             });
         });
     }
-    
+
+    function getModelTypes() {
+        if(model == 'narrator') {
+            return ["concluding", "timeskip", "introductor", "shit-stirrer"]
+        } else {
+            let aiObj = characters.filter(x=>x.name.fullname === model)[0]?.ai;
+            return aiObj ? Object.keys(aiObj).map(x=>aiObj[x].parameters?.name || x) : ['base'];
+        }
+    }
 
     const sendMessage = async () => {
         const scenes = sceneInput.split(',').map(s => s.trim()).filter(s => s);
         if(input.trim().length > 0) {
             const oldMessage = chatHistory.find(msg => msg.id === editingMessageId);
             const newMessage: ChatMessage = editingMessageId === null
-                ? { id: Date.now(), text: input, scenes, sender: 'user', model }
-                : { id: editingMessageId, text: input, scenes, sender: oldMessage?.sender || '', model };
+                ? { id: Date.now(), text: input, scenes, sender: 'user', model, modelType }
+                : { id: editingMessageId, text: input, scenes, sender: oldMessage?.sender || '', model, modelType };
     
             await db.messages.put(newMessage);
             // After saving, update the state
@@ -202,6 +219,7 @@ const ChatTab: React.FC = () => {
             scenes: messageToEdit.scenes,
             sender: 'assistant:' + messageToEdit.model,
             model: messageToEdit.model,
+            modelType: messageToEdit.modelType || 'base'
         };
         db.messages.put(aiMessage).then(() => {
             setChatHistory(prevHistory => prevHistory.map(msg => msg.id === messageId ? aiMessage : msg));
@@ -213,7 +231,7 @@ const ChatTab: React.FC = () => {
         // querying message is the message before messageToRegenerate
         if(!messageToRegenerate) return;
         if (messageToRegenerate && messageToRegenerate.sender.startsWith('assistant')) {
-            aiAgents[messageToRegenerate.model].query("", {
+            aiAgents[messageToRegenerate.model].query(messageToRegenerate.modelType || 'base', {
                 regenerate: messageToRegenerate, 
                 onScene: messageToRegenerate.scenes.join(',')}
             ).then((response: string) => {
@@ -385,15 +403,26 @@ const ChatTab: React.FC = () => {
                     rows={3}
                 />
                 <div className={styles.inputControls}>
-                    <select
-                        className="form-select"
-                        value={model}
-                        onChange={(e) => setModel(e.target.value)}
-                    >
-                        {Object.keys(aiAgents).map((key) => (
-                            <option value={key}>{key}</option>
-                        ))}
-                    </select>
+                    <div>
+                        <select
+                            className="form-select modelandtype"
+                            value={model}
+                            onChange={(e) => setModel(e.target.value)}
+                        >
+                            {['narrator',...Object.keys(aiAgents)].map((key) => (
+                                <option value={key}>{key}</option>
+                            ))}
+                        </select>
+                        <select
+                            className="form-select modelandtype"
+                            value={modelType}
+                            onChange={(e) => setModelType(e.target.value)}
+                        >
+                            {getModelTypes().map((key) => (
+                                <option value={key}>{key}</option>
+                            ))}
+                        </select>
+                    </div>
                     <input
                         type="text"
                         className="form-control mb-2"

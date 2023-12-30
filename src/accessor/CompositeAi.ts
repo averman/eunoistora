@@ -16,7 +16,7 @@ class CompositeAi implements AiCompletion {
     getName(): string {
         return `Composite ${this.type} with connectors ${this.connectors.join(",")} and parameters ${JSON.stringify(this.parameters)}`
     }
-    complete(system: string, context: { role: string; content: string; }[], question: string): Promise<string> {
+    complete(system: string, context: { role: string; content: string; }[], question: {role: string, content: string}): Promise<string> {
         if(this.type === "basic") {
             let connector: string = Array.isArray(this.connectors) ? this.connectors[0] : this.connectors;
             if(this.ais[connector]) {

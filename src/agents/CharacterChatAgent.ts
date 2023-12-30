@@ -23,8 +23,11 @@ class CharacterChatAgent extends AiAgentsWithContextManager {
     }
 
     // use this to select char ai capabilities agent
-    mapPrompt(prompt: string): string {
-        return prompt;
+    mapPrompt(prompt: string): Context {
+        return {
+            role: "aiSelection",
+            content: prompt
+        };
     }
     parseResponse(response: string): string {
         let result = response.split("{{user}}").join("you");
@@ -103,6 +106,7 @@ class CharacterChatAgent extends AiAgentsWithContextManager {
             haveGuidelines = true;
         }
 
+        // message history
         result.push(...(contexts.map((context) => {
             return {role: context.sender, content: resolveValue(context.text)}
         })));

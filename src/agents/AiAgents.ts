@@ -11,7 +11,7 @@ export abstract class AiAgents {
     abstract getName(): string;
     abstract getInstructions(): string;
     abstract getContext(parameters?: any):  Context[];
-    abstract mapPrompt(prompt: string): string;
+    abstract mapPrompt(prompt: string): Context;
     abstract parseResponse(response: string): string;
 
     async query(prompt: string, parameters?: any): Promise<string> {
