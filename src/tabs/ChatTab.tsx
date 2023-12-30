@@ -17,6 +17,7 @@ import Card from 'react-bootstrap/esm/Card';
 import EditSceneModal from '../components/EditSceneModal';
 import AnswerReformattingAgent from '../agents/AnswerReformattingAgent';
 import ChatNarratorAgent from '../agents/ChatNarratorAgent';
+import ImpersonatorAgent from '../agents/ImpersonatorAgent';
 
 const ChatTab: React.FC = () => {
     const [input, setInput] = useState<string>('');
@@ -66,7 +67,8 @@ const ChatTab: React.FC = () => {
         let ais = getAiCompletions(settings);
         let newUtilAgents = {
             summarizer: new ChatSummarizingAgent(ais['mars'], chatContextManager),
-            reformatter: new AnswerReformattingAgent(ais['gpt3.5'])
+            reformatter: new AnswerReformattingAgent(ais['gpt3.5']),
+            impersonator: new ImpersonatorAgent(ais['mars'], chatContextManager)
         }
         setUtilAgents(newUtilAgents);
     }, []);
@@ -170,11 +172,15 @@ const ChatTab: React.FC = () => {
         } else {
             triggerAiAgent();
         }
-
-
         setInput('');
         setEditingMessageId(null);
     };
+
+    const impersonate = () => {
+        utilAgents.impersonator.query(input, {onScene: sceneInput}).then((response: string) => {
+            setInput(response);
+        });
+    }
 
     const toggleGroup = (scenePath: string) => {
         setCollapsedGroups(prev => {
@@ -431,6 +437,7 @@ const ChatTab: React.FC = () => {
                         onChange={(e) => setSceneInput(e.target.value)}
                     />
                     <button className="btn btn-primary" onClick={sendMessage}>Send</button>
+                    <button className="btn btn-secondary" onClick={impersonate}>Impersonate</button>
                 </div>
             </div>
         </div>
