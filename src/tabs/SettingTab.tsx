@@ -2,6 +2,9 @@
 import React, { useContext, useState } from 'react';
 import { SettingContext } from '../contexts/SettingContext';
 import { ConnectorGenerator } from '../components/GeneratorComponent';
+import Card from 'react-bootstrap/esm/Card';
+import Button from 'react-bootstrap/esm/Button';
+import dataExportImport from '../utils/DataExportImport';
 
 interface CollapsibleGroupProps {
     title: string;
@@ -44,7 +47,7 @@ const SettingsTab = () => {
         <input
             id={key}
             type="text"
-            value={settings.apis[key]}
+            value={settings?.apis[key]}
             onChange={(e) => handleInputChange(group, key, e.target.value)}
         />
     </div>
@@ -65,10 +68,43 @@ const SettingsTab = () => {
                 {/* Other settings for connectors */}
             </CollapsibleGroup>
 
-            <CollapsibleGroup title="Characters">
-                {/* Example: Radio buttons */}
-                {/* Add radio buttons here */}
-                {/* Add more settings inputs here */}
+            <CollapsibleGroup title="Export / Import">
+                <Card style={{width:'27%', display:'inline-flex', margin:'10px'}}>
+                    <Card.Header>
+                        <Card.Title>Settings</Card.Title>
+                    </Card.Header>
+                    <Card.Body>
+                        <Card.Text>
+                            <Button style={{margin: '10px'}} variant="primary" onClick={()=>dataExportImport.onExportClick('settings')}>Export</Button>
+                            <Button style={{margin: '10px'}} variant="primary" onClick={()=>dataExportImport.onImportClick('settings')}>Import</Button>
+                            <Button style={{margin: '10px'}} variant="danger" onClick={()=>dataExportImport.onClearClick('settings')}>Clear</Button>
+                        </Card.Text>
+                    </Card.Body>
+                </Card>
+                <Card style={{width:'27%', display:'inline-flex', margin:'10px'}}>
+                    <Card.Header>
+                        <Card.Title>Character</Card.Title>
+                    </Card.Header>
+                    <Card.Body>
+                        <Card.Text>
+                            <Button style={{margin: '10px'}} variant="primary" onClick={()=>dataExportImport.onExportClick('character')}>Export</Button>
+                            <Button style={{margin: '10px'}} variant="primary" onClick={()=>dataExportImport.onImportClick('character')}>Import</Button>
+                            <Button style={{margin: '10px'}} variant="danger" onClick={()=>dataExportImport.onClearClick('character')}>Clear</Button>
+                        </Card.Text>
+                    </Card.Body>
+                </Card>
+                <Card style={{width:'27%', display:'inline-flex', margin:'10px'}}>
+                    <Card.Header>
+                        <Card.Title>Chat</Card.Title>
+                    </Card.Header>
+                    <Card.Body>
+                        <Card.Text>
+                            <Button style={{margin: '10px'}} variant="primary" onClick={()=>dataExportImport.onExportClick('chat')}>Export</Button>
+                            <Button style={{margin: '10px'}} variant="primary" onClick={()=>dataExportImport.onImportClick('chat')}>Import</Button>
+                            <Button style={{margin: '10px'}} variant="danger" onClick={()=>dataExportImport.onClearClick('chat')}>Clear</Button>
+                        </Card.Text>
+                    </Card.Body>
+                </Card>
             </CollapsibleGroup>
 
             {/* Add more groups as needed */}

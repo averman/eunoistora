@@ -26,7 +26,7 @@ export const ConnectorGenerator = () => {
     const [connectorType, setConnectorType] = useState('');
     const [connectorName, setConnectorName] = useState('');
     const [editingConnectorId, setEditingConnectorId] = useState(-1);
-    const connectors = settings.connectors? (settings.connectors.connectors || []) : [] ;
+    const connectors = settings?.connectors? (settings.connectors.connectors || []) : [] ;
 
     type Connector = { id: number; name: string; platform: string; model: string; connectorType: string };
 
