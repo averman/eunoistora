@@ -16,7 +16,6 @@ class ChatContextManager implements ContextManager {
         } else {
             summaries = Object.values(this.sceneSummary)
         }
-        // console.log("getContext", this.chatHistory)
         let filteredChat = Array.from(this.chatHistory);
         if(parameters.regenerate) {
             const regeneratedIndex = this.chatHistory.indexOf(parameters.regenerate);

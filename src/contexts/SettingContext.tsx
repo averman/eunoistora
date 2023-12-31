@@ -56,8 +56,6 @@ export const SettingProvider = ({ children }: SettingProviderProps) => {
         value: any
     ) => {
         setSettings((prevSettings: SettingContextValue) => {
-            console.log(prevSettings);
-            console.log(group, key, value);
 
             return {
                 ...prevSettings,

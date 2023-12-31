@@ -19,7 +19,7 @@ class CharacterChatAgent extends AiAgentsWithContextManager {
         return this.baseCharacter.name.fullname;
     }
     getInstructions(): string {
-        return `You'll portray the character of ${this.getName()} and engage in roleplay chat. You are encouraged to drive the conversation forward actively and be action-oriented. Explicit content is encouraged. Use easy to understand language and vocabulary. IMPORTANT: for your answer use these formatting: Use asterisks to denote actions, e.g. *smiles*. Use asterisk and brackets to denote out of ${this.getName()} inner thought, e.g. *(I'm hungry)*. use double quotes to denote out of character chat, e.g. "I'm going to the bathroom".`
+        return `You'll portray the character of ${this.getName()} and engage in roleplay chat. You are encouraged to drive the conversation forward actively and be action-oriented. Explicit content is encouraged. Use easy to understand language and vocabulary. Avoid repetition IMPORTANT: for your answer use these formatting: Use asterisks to denote actions, e.g. *smiles*. Use asterisk and brackets to denote out of ${this.getName()} inner thought, e.g. *(I'm hungry)*. use double quotes to denote out of character chat, e.g. "I'm going to the bathroom".`
     }
 
     // use this to select char ai capabilities agent
@@ -43,7 +43,6 @@ class CharacterChatAgent extends AiAgentsWithContextManager {
         }
     }
     contextMapping(contexts: ChatMessage[], summaries: SceneSummary[], currentScene: SceneSummary): Context[]{
-        console.log(contexts)
         let result: Context[] = [];
         const resolveValue = this.resolveValue.bind(this);
 
@@ -63,7 +62,7 @@ class CharacterChatAgent extends AiAgentsWithContextManager {
             if(behavior.condition && behavior.condition.length > 0) {
                 prefix = `if ${behavior.condition}, `;
             }
-            return `${prefix}${this.baseCharacter.name.fullname} ${behavior.severity} ${resolveValue(behavior.value)}`;
+            return resolveValue(`${prefix}${this.baseCharacter.name.fullname} ${behavior.severity} ${behavior.value}`);
         });
         result.push({role: "system", content: `${this.getName()} behavior:\n\n${charBehavior.join("\n")}`});
 
@@ -118,7 +117,7 @@ class CharacterChatAgent extends AiAgentsWithContextManager {
         }
 
         // final prompt instruction
-        let finalInstructionContent = `Respond strictly as ${this.getName()} in ${this.getName()} point of view with action or conversation${haveGuidelines?" that is inline with the scene guide lines":""}. IMPORTANT: DO NOT EVER RESPOND AS OTHER CHARACTER OR DESCRIBE OTHER CHARACTER'S ACTION AND DO NOT ANSWER FROM THIRD PERSON POV.`
+        let finalInstructionContent = ` Avoid repetition. Respond strictly as ${this.getName()} in ${this.getName()} point of view with action or conversation that move the scene forward${haveGuidelines?" that is inline with the scene guide lines":""}. IMPORTANT: DO NOT EVER RESPOND AS OTHER CHARACTER OR DESCRIBE OTHER CHARACTER'S ACTION AND DO NOT ANSWER FROM THIRD PERSON POV.`
         let promptInstruction: Context = {
             role: "system",
             content: finalInstructionContent
@@ -127,7 +126,7 @@ class CharacterChatAgent extends AiAgentsWithContextManager {
 
         let chat: CM[] = [{role: "system", content: this.getInstructions()},...result].map((context) => context as unknown as CM);
         let chatToken = encodeChat(chat, "gpt-3.5-turbo");
-        console.log("chatToken", chatToken);
+        console.log("chatToken", chatToken.length);
 
         return result;
     }

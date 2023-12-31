@@ -64,7 +64,6 @@ export class DataExportImport {
                         // Use the importData function on the read content
                         const decompressedData = this.importData(text);
 
-                        // Handle the decompressed data (e.g., console log or update state)
                         if (dataType === 'settings') {
                             if(decompressedData?.settings) {
                                 localStorage.setItem('settings', JSON.stringify(decompressedData));

@@ -2,7 +2,6 @@ import { AiCompletion } from "./AiCompletion";
 
 export class OpenAiAccessor implements AiCompletion {
     constructor(apikey: string, engine: string) {
-        console.log("OpenAI Accessor created", apikey, engine);
         this.apikey = apikey;
         this.engine = engine;
     }
@@ -32,8 +31,6 @@ export class OpenAiAccessor implements AiCompletion {
             'Authorization': `Bearer ${this.apikey}`,
             'Content-Type': 'application/json'
         };
-
-        console.log("OpenAI query", prompt, headers);
     
         try {
             const response = await fetch(url, {

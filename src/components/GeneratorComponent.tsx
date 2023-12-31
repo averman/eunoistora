@@ -49,7 +49,6 @@ export const ConnectorGenerator = () => {
     const handleCreateOrUpdateConnector = () => {
         const newConnector = { id: editingConnectorId != -1 ? editingConnectorId : connectors.length + 1, 
                                name: connectorName, platform, model, connectorType };
-        console.log("creating connector: " + JSON.stringify(newConnector,null,2));
         if (editingConnectorId != -1) {
             // Update the existing connector
             setConnectors(connectors.map((conn: Connector) => conn.id === editingConnectorId ? newConnector : conn));
@@ -67,7 +66,6 @@ export const ConnectorGenerator = () => {
     };
 
     const handleDeleteConnector = (id: number) => {
-        console.log("deleting connector with id: " + id);
         setConnectors(connectors.filter((conn: Connector) => conn.id !== id));
     };
 

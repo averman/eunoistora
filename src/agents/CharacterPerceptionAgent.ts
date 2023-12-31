@@ -66,8 +66,6 @@ class characterPerceptionAgent extends AiAgents {
             result.push(...this.getCharacterContext(character2, this.char1));
         }
 
-        console.log(this.lastPerception, this.char1, this.char2)
-
         if(this.lastPerception[this.char1] && this.lastPerception[this.char1][this.char2]){
             result.push({
                 role: "system",

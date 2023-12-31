@@ -54,7 +54,7 @@ const EditSceneModal: React.FC<EditSceneModalProps> = ({ show, onHide, sceneSumm
         try {
             setNewSceneSummary({ ...newSceneSummary, [field]: JSON.parse(e.target.value) });
         } catch (err) {
-            console.log(err);
+            console.error(err);
         }
     }
 

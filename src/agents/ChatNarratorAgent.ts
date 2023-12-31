@@ -3,6 +3,8 @@ import { SceneSummary } from "../models/SceneSummary";
 import { Context } from "../types/Context";
 import AiAgentsWithContextManager from "./AiAgentsWithContextManager";
 
+const tone = "lewd and erotic";
+
 class ChatNarratorAgent extends AiAgentsWithContextManager {
     getName(): string {
         return "Chat Narrator"
@@ -17,7 +19,6 @@ class ChatNarratorAgent extends AiAgentsWithContextManager {
         }
     }
     getFinalInstruction(narratorType: string): string {
-        console.log("getFinalInstruction", narratorType);
         switch(narratorType){
             case "introductor":
                 return "Please introduce the scene details like the place, the time, who is there doing what like the first paragraph of a chapter in a novel";
@@ -27,6 +28,8 @@ class ChatNarratorAgent extends AiAgentsWithContextManager {
                 return "Please set up a timeskip to the next scene that is reasonable and inline with the story and describe how long the timeskip is";
             case "shit-stirrer":
                 return "Please introduce a new plot twist or problem for one or more the characters in the scene";
+            case "tonal-shift":
+                return `Please set up the scene into a significantly more ${tone} scene while maintaining story consistency and respecting each character behaviour`;
         }
         return "";
     }
