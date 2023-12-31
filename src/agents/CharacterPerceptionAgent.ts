@@ -3,6 +3,7 @@ import { AiAgents } from "./AiAgents";
 import db from '../utils/Db';
 import { Character } from "../models/Character";
 import { ChatMessage } from "../models/ChatMessage";
+import { getSetting } from "../utils/SettingsUtils";
 
 class characterPerceptionAgent extends AiAgents {
 
@@ -121,8 +122,8 @@ function resolveValue(str: string, character: Character){
     for(let [key, value] of Object.entries(character.linkedCharacters)){
         result = result.split(`{{${key}}}`).join(value)
     }
-    // todo: substitute {{user}} with user name
-    result = result.split("{{user}}").join("you");
+    
+    result = result.split("{{user}}").join(getSetting("userProfile.activeCharacter.name", "you"));
     return result;
 }
 

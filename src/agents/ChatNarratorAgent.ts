@@ -1,6 +1,7 @@
 import { ChatMessage } from "../models/ChatMessage";
 import { SceneSummary } from "../models/SceneSummary";
 import { Context } from "../types/Context";
+import { getSetting } from "../utils/SettingsUtils";
 import AiAgentsWithContextManager from "./AiAgentsWithContextManager";
 
 const tone = "lewd and erotic";
@@ -71,8 +72,7 @@ class ChatNarratorAgent extends AiAgentsWithContextManager {
 }
 
 function resolveValue(str: string){
-    // todo: substitute {{user}} with user name
-    return str.split("{{user}}").join("you");
+    return str.split("{{user}}").join(getSetting("userProfile.activeCharacter.name", "you"));
 }
 
 export default ChatNarratorAgent;

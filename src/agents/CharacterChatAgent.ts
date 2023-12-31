@@ -8,6 +8,7 @@ import CharacterAiCompletion from "../accessor/CharacterAiCompletion";
 import {encodeChat} from "gpt-tokenizer";
 import { ChatMessage } from "../models/ChatMessage";
 import { SceneSummary } from "../models/SceneSummary";
+import { getSetting } from "../utils/SettingsUtils";
 
 class CharacterChatAgent extends AiAgentsWithContextManager {
     baseCharacter: Character;
@@ -19,7 +20,7 @@ class CharacterChatAgent extends AiAgentsWithContextManager {
         return this.baseCharacter.name.fullname;
     }
     getInstructions(): string {
-        return `You'll portray the character of ${this.getName()} and engage in roleplay chat. You are encouraged to drive the conversation forward actively and be action-oriented. Explicit content is encouraged. Use easy to understand language and vocabulary. Avoid repetition IMPORTANT: for your answer use these formatting: Use asterisks to denote actions, e.g. *smiles*. Use asterisk and brackets to denote out of ${this.getName()} inner thought, e.g. *(I'm hungry)*. use double quotes to denote out of character chat, e.g. "I'm going to the bathroom".`
+        return `You'll portray the character of ${this.getName()} and engage in roleplay chat. You are encouraged to drive the conversation forward actively and be action-oriented. Explicit content is encouraged. Use easy to understand language and vocabulary. In answering you have to avoid repetition and increase the rate of character speech.`
     }
 
     // use this to select char ai capabilities agent
@@ -30,7 +31,7 @@ class CharacterChatAgent extends AiAgentsWithContextManager {
         };
     }
     parseResponse(response: string): string {
-        let result = response.split("{{user}}").join("you");
+        let result = response.split("{{user}}").join(getSetting("userProfile.activeCharacter.name", "you"));
         result = result.split("{{char}}:").join("\n\n");
         result = result.split(this.baseCharacter.name.fullname+":").join("\n\n");
         return result.trim();
@@ -66,6 +67,17 @@ class CharacterChatAgent extends AiAgentsWithContextManager {
         });
         result.push({role: "system", content: `${this.getName()} behavior:\n\n${charBehavior.join("\n")}`});
 
+        // user character summary
+        let charInThisScene = contexts.map((context) => context.sender.startsWith("user")?context.sender:context.sender.split(":")[1]).reduce((prev, curr) => {
+            if(!prev.includes(curr)) prev.push(curr);
+            return prev;
+        }, [] as string[]);
+        let userProfile = getSetting("userProfile.activeCharacter");
+        if(charInThisScene.includes("user")){
+            if(userProfile)
+                result.push({role: "system", content: `character summary of ${userProfile.name}: ${userProfile.characterDescription}`});
+        }
+
         // scene summary
         if(summaries && summaries.length > 0){
             let characterPerceptions: {[key: string]: {[key: string]: string}} = {};
@@ -82,10 +94,6 @@ class CharacterChatAgent extends AiAgentsWithContextManager {
                     }
                 }
             }
-            let charInThisScene = contexts.map((context) => context.sender.startsWith("user")?context.sender:context.sender.split(":")[1]).reduce((prev, curr) => {
-                if(!prev.includes(curr)) prev.push(curr);
-                return prev;
-            }, [] as string[]);
             for(let char of charInThisScene){
                 result.push({role: "system", content: `the last the perception of ${this.getName()} about ${char} are:\n\n${
                     characterPerceptions[this.getName()][char]
@@ -107,7 +115,7 @@ class CharacterChatAgent extends AiAgentsWithContextManager {
 
         // message history
         result.push(...(contexts.map((context) => {
-            return {role: context.sender, content: resolveValue(context.text)}
+            return {role: context.sender == 'user'? context.sender+":"+userProfile.name : context.sender, content: resolveValue(context.text)}
         })));
 
         type CM = {
@@ -136,8 +144,7 @@ class CharacterChatAgent extends AiAgentsWithContextManager {
         for(let [key, value] of Object.entries(this.baseCharacter.linkedCharacters)){
             result = result.split(`{{${key}}}`).join(value)
         }
-        // todo: substitute {{user}} with user name
-        return result;
+        return result.split("{{user}}").join(getSetting("userProfile.activeCharacter.name", "you"));
     }
 }
 
