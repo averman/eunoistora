@@ -1,4 +1,5 @@
 import { Context } from "../types/Context";
+import { getSetting } from "../utils/SettingsUtils";
 import AiAgentsWithContextManager from "./AiAgentsWithContextManager";
 
 class ChatSummarizingAgent extends AiAgentsWithContextManager {
@@ -20,8 +21,7 @@ class ChatSummarizingAgent extends AiAgentsWithContextManager {
 }
 
 function resolveValue(str: string){
-    // todo: substitute {{user}} with user name
-    return str.split("{{user}}").join("you");
+    return str.split("{{user}}").join(getSetting("userProfile.activeCharacter.name", "you"));
 }
 
 export default ChatSummarizingAgent;

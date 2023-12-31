@@ -5,6 +5,7 @@ import { ConnectorGenerator } from '../components/GeneratorComponent';
 import Card from 'react-bootstrap/esm/Card';
 import Button from 'react-bootstrap/esm/Button';
 import dataExportImport from '../utils/DataExportImport';
+import UserProfileComponent from '../components/UserProfileComponent';
 
 interface CollapsibleGroupProps {
     title: string;
@@ -66,6 +67,12 @@ const SettingsTab = () => {
                 {/* Here we add the new Generator component */}
                 <ConnectorGenerator />
                 {/* Other settings for connectors */}
+            </CollapsibleGroup>
+
+
+            <CollapsibleGroup title="User Profile">
+                {/* Add user profile component here */}    
+                <UserProfileComponent />
             </CollapsibleGroup>
 
             <CollapsibleGroup title="Export / Import">

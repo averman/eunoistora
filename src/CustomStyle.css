@@ -177,7 +177,9 @@ body {
   border: 1px solid #ddd;
   border-radius: 5px;
   overflow: hidden; /* Ensures the content is clipped during animation */
-  width: 90%;
+  width: 95%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .group-title {
@@ -197,7 +199,8 @@ body {
 }
 
 .group-content.open {
-  max-height: 500px; /* Adjust as needed */
+  max-height: 600px; /* Adjust as needed */
+  overflow: auto;
 }
 
 .group-content.closed {

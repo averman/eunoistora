@@ -18,6 +18,7 @@ import EditSceneModal from '../components/EditSceneModal';
 import AnswerReformattingAgent from '../agents/AnswerReformattingAgent';
 import ChatNarratorAgent from '../agents/ChatNarratorAgent';
 import ImpersonatorAgent from '../agents/ImpersonatorAgent';
+import { getSetting } from '../utils/SettingsUtils';
 
 const ChatTab: React.FC = () => {
     const [input, setInput] = useState<string>('');
@@ -282,6 +283,7 @@ const ChatTab: React.FC = () => {
         }
         let retval: React.JSX.Element[] = [];
         let i = 0;
+        let userName = getSetting('userProfile.activeCharacter.name', "You")
 
         for (let group of groupedMessages) {
             if (group.scenes.filter(x => x).length === 0) {
@@ -292,7 +294,7 @@ const ChatTab: React.FC = () => {
                             <div key={msg.id} className={styles.chatMessage}>
                                 {/* Display Sender */}
                                 <div className={styles.messageSender}>
-                                    {msg.sender.startsWith('user') ? 'You' : msg.sender.split(':', 2)[1]}
+                                    {msg.sender.startsWith('user') ? userName : msg.sender.split(':', 2)[1]}
                                 </div>
                                 {editingMessageId === msg.id ? (
                                     <>
