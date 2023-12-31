@@ -17,9 +17,7 @@ export class NarratorAgent extends AiAgents {
         mainInstructions: "You will be given an instruction and answer strictly in the narrator point of view."
     };
     tune(storyTeller: StoryTeller): void {
-        console.log(this.settings)
         this.settings = storyTeller.get(this.settings, "agents.narrator")
-        console.log(this.settings)
     }
     constructor(ai: AiCompletion) {
         super(ai);
@@ -49,7 +47,6 @@ export class NarratorAgent extends AiAgents {
         let lower = response.toLowerCase();
         let a = lower.indexOf(`---${this.getName()}---\n`);
         let b = lower.indexOf(`---end ${this.getName()}---`);
-        console.log("[parseResponse]", lower, a, b)
         if(a == -1 ) a = 0;
         else a += this.getName().length + 7;
         if(b == -1 ) b = response.length;

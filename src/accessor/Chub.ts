@@ -2,7 +2,6 @@ import { AiCompletion } from "./AiCompletion";
 
 export class Chub implements AiCompletion {
     constructor(apikey: string) {
-        console.log("Chub Accessor created", apikey);
         this.apikey = apikey;
         this.uriIndex = 0;
     }

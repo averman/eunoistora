@@ -1,5 +1,5 @@
 // CharacterTab.tsx
-import React, { useState, useEffect, ReactNode } from 'react';
+import React, { useState, useEffect, ReactNode, useContext } from 'react';
 import db from '../utils/Db'; // Update with the correct path
 import { Character, CharacterAI, CharacterAiSystem, CharacterBehavior, CharacterProperty, CharacterScenario } from '../models/Character'; // Update with the correct path
 import '../styles/Characters.css'
@@ -8,6 +8,10 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Accordion from 'react-bootstrap/Accordion';
 import { PlusCircleFill, TrashFill } from 'react-bootstrap-icons';
+import { getAiCompletions } from '../PropsTransformer/AiAgentsTransformer';
+import { SettingContext } from '../contexts/SettingContext';
+import { AiAgents } from '../agents/AiAgents';
+import { CharacterImportAgent } from '../agents/CharacterImportAgent';
 
 const CharacterTab: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState<string>("");
@@ -24,7 +28,10 @@ const CharacterTab: React.FC = () => {
             base: { type: '', connectors: [], parameters: {} } // Default empty structure for base AI
         },
     });
-
+    const [importUrl, setImportUrl] = useState<string>("");
+    const { settings, updateSetting } = useContext(SettingContext);
+    const [aiAgent, setAiAgent] = useState<AiAgents | null>(null); 
+    
     const characterForm = () => {
         if (activeCharacter) return activeCharacter;
         return newCharacter;
@@ -39,6 +46,11 @@ const CharacterTab: React.FC = () => {
         const allCharacters = await db.characters.toArray();
         setCharacters(allCharacters);
     };
+
+    useEffect(() => {
+        let ais = getAiCompletions(settings);
+        setAiAgent(new CharacterImportAgent(ais.mars));
+    }, [settings]);
 
     useEffect(() => {
         (document as any).db = db;
@@ -138,6 +150,27 @@ const CharacterTab: React.FC = () => {
                 ))}
             </div>
         );
+    }
+
+    async function importFromChub() {
+        let url = importUrl;
+        if(!url.startsWith("https://api.chub.ai")) {
+            if(url.startsWith("https://chub.ai"))
+                url = url.replace("https://chub.ai", "https://api.chub.ai/api")+"?full=true";
+            else if(url.startsWith("characters/"))
+                url = `https://api.chub.ai/api/${url}?full=true`;
+            else if(url.split("/").length === 1)
+                url = `https://api.chub.ai/api/characters/${url}?full=true`;
+        }
+        let response = await fetch(url)
+        let data = await response.json();
+        if(!(data?.node?.definition)) return;
+        let result = await aiAgent?.query("start",{source: data.node.definition, character: newCharacter});
+        try{
+            setNewCharacter(JSON.parse(result!));
+        }catch(e){
+            console.error(e); 
+        }
     }
 
     const renderDynamicItems = (category: string, items: { [key: string]: CharacterProperty | CharacterBehavior | CharacterScenario | CharacterAI | string }) => {
@@ -365,6 +398,9 @@ const CharacterTab: React.FC = () => {
                 </div>
 
                 {/* Submit Button for the entire form */}
+                {!activeCharacter && <div>
+                        <Form.Control type="text" placeholder="Enter Chub URL" value={importUrl} onChange={(e) => setImportUrl(e.target.value)} className='modelandtype'/><Button onClick={(e)=>importFromChub()}>Import from Chub</Button>
+                    </div>}
                 <Button onClick={handleCreateCharacter}>{activeCharacter ? "Save Changes" : "Create Character"}</Button>
                 {activeCharacter && <Button onClick={handleDeslectCharacter}>Cancel</Button>}
                 {activeCharacter && <Button variant='danger' onClick={handleDeleteCharacter}>Delete</Button>}

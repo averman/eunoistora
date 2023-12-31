@@ -25,7 +25,7 @@ class CharacterAiCompletion implements AiCompletion{
     }
     complete(system: string, context: { role: string; content: string; }[], question: {role: string, content: string}): Promise<string> {
         if(question?.role === "aiSelection" && this.completions[question.content]) {
-            return this.completions[question.content].complete(system, context, question);
+            return this.completions[question.content].complete(system, context,  {role: "system", content: ""});
         }
         return this.completions.base.complete(system, context, question);
     }

@@ -9,12 +9,10 @@ export class ContextManager {
         this.settings = settings;
         this.storyTeller = storyTeller;
         let rawLocations = this.storyTeller.get({locations: []}, "");
-        console.log(rawLocations)
         for(let locationName of Object.keys(rawLocations.locations)) {
             let location = rawLocations.locations[locationName];
             this.locations[locationName] = new Locations(locationName, location.name, location.description, location.actions);
         }
-        console.log("context manager",this)
     }
 
     getContext(parameters: string[]): string[] {

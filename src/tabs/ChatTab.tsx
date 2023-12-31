@@ -4,7 +4,7 @@ import { ChevronDown, ChevronRight, PencilSquare, Reply, Trash, CardHeading } fr
 import ReactMarkdown from 'react-markdown';
 import styles from '../styles/ChatTab.module.css';
 import { SettingContext } from '../contexts/SettingContext';
-import getAiAgents, { getAiCompletions } from '../PropsTransformer/AiAgentsTransformer';
+import { getAiCompletions } from '../PropsTransformer/AiAgentsTransformer';
 import db from '../utils/Db';
 import { ChatMessage } from '../models/ChatMessage';
 import { chatContextManager } from '../contextManager/ChatContextManager';
@@ -31,7 +31,7 @@ const ChatTab: React.FC = () => {
     });
     const [modelType, setModelType] = useState<string>(() => {
         // Initialize model from localStorage, or provide a default value
-        return localStorage.getItem('selectedModel') || 'defaultModel';
+        return localStorage.getItem('modelType') || 'base';
     });
     const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
     const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
@@ -45,7 +45,6 @@ const ChatTab: React.FC = () => {
 
     const handleModalClose = () => setModalShow(null);
     const handleModalSave = (newSummary: SceneSummary, keyName: string) => {
-        console.log("saving", newSummary, keyName)
         setSceneSummaries({...sceneSummaries, [keyName]: newSummary});
         setModalShow(null);
     };
@@ -117,6 +116,11 @@ const ChatTab: React.FC = () => {
         localStorage.setItem('selectedModel', model);
     }, [model]);
 
+    // Use useEffect to save selected model to localStorage when it changes
+    useEffect(() => {
+        localStorage.setItem('modelType', modelType);
+    }, [modelType]);
+
     // Use useEffect to save scene input to localStorage when it changes
     useEffect(() => {
         localStorage.setItem('sceneInput', sceneInput);
@@ -147,7 +151,7 @@ const ChatTab: React.FC = () => {
 
     function getModelTypes() {
         if(model == 'narrator') {
-            return ["concluding", "timeskip", "introductor", "shit-stirrer"]
+            return ["concluding", "timeskip", "introductor", "shit-stirrer", "tonal-shift"]
         } else {
             let aiObj = characters.filter(x=>x.name.fullname === model)[0]?.ai;
             return aiObj ? Object.keys(aiObj).map(x=>aiObj[x].parameters?.name || x) : ['base'];
