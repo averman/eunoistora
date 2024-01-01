@@ -9,6 +9,7 @@ import {encodeChat} from "gpt-tokenizer";
 import { ChatMessage } from "../models/ChatMessage";
 import { SceneSummary } from "../models/SceneSummary";
 import { getSetting } from "../utils/SettingsUtils";
+import { formatChat } from "../utils/FormattingUtils";
 
 class CharacterChatAgent extends AiAgentsWithContextManager {
     baseCharacter: Character;
@@ -34,7 +35,7 @@ class CharacterChatAgent extends AiAgentsWithContextManager {
         let result = response.split("{{user}}").join(getSetting("userProfile.activeCharacter.name", "you"));
         result = result.split("{{char}}:").join("\n\n");
         result = result.split(this.baseCharacter.name.fullname+":").join("\n\n");
-        return result.trim();
+        return formatChat(result);
     }
     parameterMapping(parameters: any) {
         return {
