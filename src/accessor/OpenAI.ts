@@ -12,12 +12,29 @@ export class OpenAiAccessor implements AiCompletion {
     getName(): string {
         return "OpenAI " + this.engine;
     }
-    complete(system: string, context:  {role: string, content: string}[], question: {role: string, content: string}): Promise<string> {
+
+    mapContextToStrictPrompt(context: {role: string, content: string}[]): {role: string, content: string}[] {
+        return context.map((c) => {
+            let [role, char] = c.role.split(":");
+            let content = c.content;
+            if(char) {
+                content = `[roleplaying as ${char}]\n${content}`;
+            }
+            return {role, content};
+        });
+    }
+
+    parseStrictAnswer(answer: string): string {
+        let [role, result] = answer.split(/\[roleplaying as .*\]\n/m);
+        return result;
+    }
+
+    async complete(system: string, context:  {role: string, content: string}[], question: {role: string, content: string}): Promise<string> {
         let promptObject = {
             model: this.engine,
             messages: [
                 { "role": "system", "content": system },
-                ...context,
+                ...this.mapContextToStrictPrompt(context),
                 question
             ]
         }
