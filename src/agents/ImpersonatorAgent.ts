@@ -1,4 +1,5 @@
 import { Context } from "../types/Context";
+import { formatChat } from "../utils/FormattingUtils";
 import { getSetting } from "../utils/SettingsUtils";
 import AiAgentsWithContextManager from "./AiAgentsWithContextManager";
 
@@ -26,7 +27,7 @@ class ImpersonatorAgent extends AiAgentsWithContextManager {
         };
     }
     parseResponse(response: string): string {
-        return response;
+        return formatChat(response);
     }
 
 }

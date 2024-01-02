@@ -19,11 +19,12 @@ export class OpenRouter implements AiCompletion {
             model: this.model,
             messages: [
                 { "role": "system", "content": system },
-                ...context,
-                question
+                ...context
             ]
         }
-        return this.queryOpenAi(JSON.stringify(promptObject));
+        if(question.content.length > 0) promptObject.messages.push(question);
+        promptObject.messages = this.mapContextToStrictPrompt(promptObject.messages);
+        return this.parseStrictAnswer(await this.queryOpenAi(JSON.stringify(promptObject)));
     }
 
     private async getModels(): Promise<string[]> {
@@ -89,6 +90,22 @@ export class OpenRouter implements AiCompletion {
             }
         });
         return model;
+    }
+
+    mapContextToStrictPrompt(context: {role: string, content: string}[]): {role: string, content: string}[] {
+        return context.map((c) => {
+            let [role, char] = c.role.split(":");
+            let content = c.content;
+            if(char) {
+                content = `[roleplaying as ${char}]\n${content}`;
+            }
+            return {role, content};
+        });
+    }
+
+    parseStrictAnswer(answer: string): string {
+        let [role, result] = answer.split(/\[roleplaying as .*\]\n/m);
+        return result;
     }
 
     private async queryOpenAi(prompt: string): Promise<string> {
