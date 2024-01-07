@@ -9,6 +9,7 @@ import { characterPerceptionAgent } from '../agents/CharacterPerceptionAgent';
 import { Chub } from '../accessor/Chub';
 import { getAiCompletions } from '../PropsTransformer/AiAgentsTransformer';
 import { AiCompletion } from '../accessor/AiCompletion';
+import { SceneGuidelineAgent } from '../agents/SceneGuidelineAgent';
 
 interface EditSceneModalProps {
     show: string | null;
@@ -29,6 +30,7 @@ if(rawSetting) {
 }
 
 let aiAgent = new characterPerceptionAgent(ais.mars);
+let guidelineAgent = new SceneGuidelineAgent(ais.testor);
 
 const EditSceneModal: React.FC<EditSceneModalProps> = ({ show, onHide, sceneSummary, onSave, summarizeScene }) => {
     const [newSceneSummary, setNewSceneSummary] = useState<SceneSummary>(Object.assign({}, sceneSummary));
@@ -58,6 +60,12 @@ const EditSceneModal: React.FC<EditSceneModalProps> = ({ show, onHide, sceneSumm
         }
     }
 
+    async function generateGuideline(scenePath: string): Promise<void> {
+        let response = await guidelineAgent.query("start", {onScene: scenePath});
+        setNewSceneSummary({ ...newSceneSummary, 'sceneGuideLines': JSON.parse(response) });
+        
+    }
+
     async function updateCharacterPerception(scenePath: string): Promise<void> {
         let [messages, scenes] = await Promise.all([db.messages.toArray(), db.scenes.toArray()]);
         let scenesList = messages.map(m => m.scenes.join(','))
@@ -79,10 +87,12 @@ const EditSceneModal: React.FC<EditSceneModalProps> = ({ show, onHide, sceneSumm
         let messagesInScene = messages.filter(m => m.scenes.join(',') === scenePath);
         let currentScene = scenes.find(s => s.scenePath === scenePath);
         let charactersInScene = messagesInScene.map(m => m.sender)
+                                    .filter(c => c != 'assistant:narrator')
                                     .reduce((acc, val) => acc.includes(val) ? acc : acc.concat(val), [] as string[])
                                     .map(c=> c == 'user' ? c : c.split(':')[1]);
         let messagesInAllScene = messages.filter(m => (m.scenes.join(',') === scenePath) || (m.scenes.join(',').startsWith(scenePath+",")));
         let charactersInAllScene = messagesInAllScene.map(m => m.sender)
+                                    .filter(c => c != 'assistant:narrator')
                                     .reduce((acc, val) => acc.includes(val) ? acc : acc.concat(val), [] as string[])
                                     .map(c=> c == 'user' ? c : c.split(':')[1]);
 
@@ -139,9 +149,10 @@ const EditSceneModal: React.FC<EditSceneModalProps> = ({ show, onHide, sceneSumm
                                 <Form.Control
                                     as="textarea"
                                     rows={3}
-                                    value={JSON.stringify(newSceneSummary.sceneGuideLines) || ''}
+                                    value={JSON.stringify(newSceneSummary.sceneGuideLines, null, 2) || ''}
                                     onChange={(e) => handleJSONChange(e, 'sceneGuideLines')}
                                 />
+                                <Button variant="primary" onClick={() => generateGuideline(show!)}>Generate Guideline</Button>
                             </Form.Group>
 
                             {/* Scene Behavior Changes */}

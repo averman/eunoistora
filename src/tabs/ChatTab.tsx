@@ -66,7 +66,7 @@ const ChatTab: React.FC = () => {
         });
         let ais = getAiCompletions(settings);
         let newUtilAgents = {
-            summarizer: new ChatSummarizingAgent(ais['mars'], chatContextManager),
+            summarizer: new ChatSummarizingAgent(ais['testor'], chatContextManager),
             reformatter: new AnswerReformattingAgent(ais['gpt3.5']),
             impersonator: new ImpersonatorAgent(ais['mars'], chatContextManager)
         }
@@ -115,6 +115,7 @@ const ChatTab: React.FC = () => {
     // Use useEffect to save selected model to localStorage when it changes
     useEffect(() => {
         localStorage.setItem('selectedModel', model);
+        localStorage.setItem('modelType', getModelTypes()[0]);
     }, [model]);
 
     // Use useEffect to save selected model to localStorage when it changes
@@ -137,7 +138,7 @@ const ChatTab: React.FC = () => {
 
     function triggerAiAgent() {
         if(!aiAgents[model]) {
-            console.error(`Model ${model} not found`);
+            console.error(`Model ${model} not found from available models: ${Object.keys(aiAgents)}`);
             return;
         }
         let onScene = sceneInput.split(',').map(s => s.trim()).filter(s => s).join(',');

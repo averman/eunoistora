@@ -1,6 +1,7 @@
 import { ChatMessage } from "../models/ChatMessage";
 import { SceneSummary } from "../models/SceneSummary";
 import { Context } from "../types/Context";
+import { formatChat } from "../utils/FormattingUtils";
 import { getSetting } from "../utils/SettingsUtils";
 import AiAgentsWithContextManager from "./AiAgentsWithContextManager";
 
@@ -64,7 +65,7 @@ class ChatNarratorAgent extends AiAgentsWithContextManager {
         };
     }
     parseResponse(response: string): string {
-        return response;
+        return formatChat(response);
     }
     constructor(ai: any, contextManager: any) {
         super(ai, contextManager);

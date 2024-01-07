@@ -17,13 +17,16 @@ export class OpenRouter implements AiCompletion {
         if(!this.model) this.model = await this.assignModel();
         let promptObject = {
             model: this.model,
+            seed: -1,
+            // max_tokens: 350,
             messages: [
                 { "role": "system", "content": system },
-                ...context,
-                question
+                ...context
             ]
         }
-        return this.queryOpenAi(JSON.stringify(promptObject));
+        if(question.content.length > 0) promptObject.messages.push(question);
+        promptObject.messages = this.mapContextToStrictPrompt(promptObject.messages);
+        return this.parseStrictAnswer(await this.queryOpenAi(JSON.stringify(promptObject)));
     }
 
     private async getModels(): Promise<string[]> {
@@ -89,6 +92,23 @@ export class OpenRouter implements AiCompletion {
             }
         });
         return model;
+    }
+
+    mapContextToStrictPrompt(context: {role: string, content: string}[]): {role: string, content: string}[] {
+        return context.map((c) => {
+            let [role, char] = c.role.split(":");
+            let content = c.content;
+            if(char) {
+                content = `[roleplaying as ${char}]\n${content}`;
+            }
+            return {role, content};
+        });
+    }
+
+    parseStrictAnswer(answer: string): string {
+        let [role, result] = answer.split(/\[roleplaying as .*\]\n/m);
+        if(!result) return role;
+        return result;
     }
 
     private async queryOpenAi(prompt: string): Promise<string> {
