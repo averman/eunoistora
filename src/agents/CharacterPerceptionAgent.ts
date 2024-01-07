@@ -17,7 +17,7 @@ class characterPerceptionAgent extends AiAgents {
         return "Character Perception Agent"
     }
     getInstructions(): string {
-        return `describe how ${this.char1} view, thinks, and feels about ${this.char2} given the context available.`
+        return `describe how ${this.char1} view, thinks, and feels about ${this.char2} given the context available in concise manner without losing any detail.`
     }
 
     private getCharacterContext(character: Character, asObjectOf?: string): Context[] {
@@ -83,7 +83,7 @@ class characterPerceptionAgent extends AiAgents {
         if(this.lastPerception[this.char1] && this.lastPerception[this.char1][this.char2]){
             result.push({
                 role: "system",
-                content: ` update how ${this.char1} view, thinks, and feels about about ${this.char2} given the new context below.`
+                content: ` update how ${this.char1} view, thinks, and feels about about ${this.char2} given the new context below in concise manner without losing any detail`
             })
         } else {
             result.push({

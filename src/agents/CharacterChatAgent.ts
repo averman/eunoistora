@@ -126,7 +126,7 @@ class CharacterChatAgent extends AiAgentsWithContextManager {
         }
 
         // final prompt instruction
-        let finalInstructionContent = ` Avoid repetition. Respond strictly as ${this.getName()} in ${this.getName()} point of view with action or conversation that move the scene forward${haveGuidelines?" that is inline with the scene guide lines":""}. IMPORTANT: DO NOT EVER RESPOND AS OTHER CHARACTER OR DESCRIBE OTHER CHARACTER'S ACTION AND DO NOT ANSWER FROM THIRD PERSON POV.`
+        let finalInstructionContent = ` Avoid repetition. Respond strictly in ${this.getName()} point of view with action or conversation that move the scene forward${haveGuidelines?" that is inline with the scene guide lines":""}. IMPORTANT: do not ever respond as ${charInThisScene.filter(x=>x!=this.baseCharacter.name.fullname).join(', ')} strictly respond as ${this.getName()}.`
         let promptInstruction: Context = {
             role: "system",
             content: finalInstructionContent

@@ -7,12 +7,12 @@ class ChatSummarizingAgent extends AiAgentsWithContextManager {
         return "chat summarizer"
     }
     getInstructions(): string {
-        return "You will be given all the chat, conversactions, and events that happened so far in this scene. Summarize them all.";
+        return "You will be given all the chat, conversactions, and events that happened so far in this scene. Summarize them all but focus more on current scene events.";
     }
     mapPrompt(prompt: string): Context {
         return {
             role: "system",
-            content: "INSTRUCTION: Summarize all the chat, conversactions, and events that happened so far in this scene."
+            content: "INSTRUCTION: Summarize all the chat, conversactions, and events that happened so far in this current scene. Only focus on the current scene"
         };
     }
     parseResponse(response: string): string {

@@ -16,7 +16,7 @@ class ImpersonatorAgent extends AiAgentsWithContextManager {
         let userProfile = getSetting("userProfile.activeCharacter");
 
         if(mappedPrompt.length > 0) {
-            mappedPrompt = `IMPORTANT: you are ${userProfile.name}. \nINSTRUCTION: rephrase, expand, and put on more detail on this idea (but do not answer as other character):\n\n${mappedPrompt}`;
+            mappedPrompt = `IMPORTANT: you are ${userProfile.name}. \nINSTRUCTION: rephrase, expand, and put on more detail on this idea (answer as ${userProfile.name}, do not answer as other character):\n\n${mappedPrompt}`;
         } else {
             mappedPrompt = `IMPORTANT: you are ${userProfile.name}. \nINSTRUCTION: describe what you are doing, thinking, and feeling right now as ${userProfile.name} PoV (but do not answer as other character)`;
         }

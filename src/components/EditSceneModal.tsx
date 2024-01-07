@@ -30,7 +30,7 @@ if(rawSetting) {
 }
 
 let aiAgent = new characterPerceptionAgent(ais.mars);
-let guidelineAgent = new SceneGuidelineAgent(ais.mars);
+let guidelineAgent = new SceneGuidelineAgent(ais.testor);
 
 const EditSceneModal: React.FC<EditSceneModalProps> = ({ show, onHide, sceneSummary, onSave, summarizeScene }) => {
     const [newSceneSummary, setNewSceneSummary] = useState<SceneSummary>(Object.assign({}, sceneSummary));
@@ -62,7 +62,7 @@ const EditSceneModal: React.FC<EditSceneModalProps> = ({ show, onHide, sceneSumm
 
     async function generateGuideline(scenePath: string): Promise<void> {
         let response = await guidelineAgent.query("start", {onScene: scenePath});
-        setNewSceneSummary({ ...newSceneSummary, 'sceneGuideLines': {'all': response} });
+        setNewSceneSummary({ ...newSceneSummary, 'sceneGuideLines': JSON.parse(response) });
         
     }
 

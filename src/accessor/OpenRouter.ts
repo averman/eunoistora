@@ -17,6 +17,8 @@ export class OpenRouter implements AiCompletion {
         if(!this.model) this.model = await this.assignModel();
         let promptObject = {
             model: this.model,
+            seed: -1,
+            // max_tokens: 350,
             messages: [
                 { "role": "system", "content": system },
                 ...context
@@ -105,6 +107,7 @@ export class OpenRouter implements AiCompletion {
 
     parseStrictAnswer(answer: string): string {
         let [role, result] = answer.split(/\[roleplaying as .*\]\n/m);
+        if(!result) return role;
         return result;
     }
 
